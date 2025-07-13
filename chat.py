@@ -1,41 +1,70 @@
-from openai import OpenAI
-import json
-from datetime import datetime
-from utils import Colors, get_response, edit_send_message, load_messages
-
-with open('user.json', 'r') as f:
-    usr_conf = json.load(f)
-
-client = OpenAI(api_key=usr_conf['api_key'], base_url=usr_conf['base_url'])
-
-chat_config = {'model': 'deepseek-chat',
-               'stream': True,
-               'temperature': 1.0,
-               'chat_save_dir': 'chats',
-               'chat_name': 'v0_test(1)'}
+import tools
+import editor
+import asyncio
+import sys
+from prompt_toolkit import print_formatted_text, HTML
 
 
-if __name__ == '__main__':
-    # messages = []
-    messages = load_messages(chat_config)
+async def spinning_cursor():
+    while True:
+        for cursor in '|/-\\':
+            sys.stdout.write(f'\r{cursor}')
+            sys.stdout.flush()
+            await asyncio.sleep(0.5)
+
+
+async def get_response(messages: list, client):
+    response = await client.chat.completions.create(
+                    model='deepseek-reasoner',
+                    messages=messages,
+                    stream=False,
+                    temperature=1.0
+                    )
+
+    response_message = response.choices[0].message.content
+    return response_message
+
+
+# async def fake_get_response(messages: list, client):
+#     response = await asyncio.sleep(2)
+#     return 'fake response'
+
+
+async def one_round(messages, client):
+    spin_task = asyncio.create_task(spinning_cursor())
+    res_task = asyncio.create_task(get_response(messages, client))
+    response = await res_task
+    spin_task.cancel()
+    sys.stdout.write('\r' + ' ' * 50 + '\r')
+    return response
+
+
+def create_chat(client, date, chatname):
+    json_path, md_path = tools.get_chat_file_paths(date, chatname)
+    messages = tools.load_chat_json(json_path)
+
+    session = editor.create_session('usr > ', f'{date}  {chatname}')
+
 
     while True:
-        short_message = input(f'{Colors.BOLD}{Colors.GREEN}YOU: {Colors.RESET}\n')
 
-        if short_message.lower() in ['exit', 'quit', 'bye']:
+        try:
+            sent_message = session.prompt()
+            messages.append({'role': 'user', 'content': sent_message})
+            editor.draw_line()
+            try:
+                # respons = get_response(messages, client)
+                response = asyncio.run(one_round(messages, client))
+                editor.print_text('ds', response)
+                messages.append({'role': 'assistant', 'content': response})
+                editor.draw_line()
+            except:
+                print('error')
+        except KeyboardInterrupt:
             break
-        elif short_message.lower() in ['nano:', 'editor:', 'nano', 'editor']:
-            message = edit_send_message()
-            print(f'{message}')
-        else:
-            message = short_message.lower()
 
-        messages.append({'role': 'user', 'content': message})
+        except EOFError:
+            break
 
-        print(f'\n{Colors.BOLD}{Colors.CYAN}AI: {Colors.RESET}')
-        answer, _ = get_response(messages, client, chat_config)
-
-        messages.append({'role': 'assistant', 'content': answer})
-    
-    with open(f'messages/{chat_config['chat_name']}.json', mode='w', encoding='utf-8') as f:
-        json.dump(messages, f)
+        tools.save_chat_json(json_path, messages)
+        tools.save_chat_md(md_path, messages)
