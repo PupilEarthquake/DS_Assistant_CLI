@@ -2,13 +2,13 @@ import tools
 import editor
 import asyncio
 import sys
-from prompt_toolkit import print_formatted_text, HTML
+from html import escape
 
 
 async def spinning_cursor():
     while True:
         for cursor in '|/-\\':
-            sys.stdout.write(f'\r{cursor}')
+            sys.stdout.write(f'\r{cursor} ')
             sys.stdout.flush()
             await asyncio.sleep(0.5)
 
@@ -50,21 +50,26 @@ def create_chat(client, date, chatname):
 
         try:
             sent_message = session.prompt()
-            messages.append({'role': 'user', 'content': sent_message})
+            messages.append({"role": "user", "content": sent_message})
             editor.draw_line()
+
             try:
-                # respons = get_response(messages, client)
+
                 response = asyncio.run(one_round(messages, client))
-                editor.print_text('ds', response)
-                messages.append({'role': 'assistant', 'content': response})
+                editor.print_text('ds', escape(response))
+                messages.append({"role": "assistant", "content": response})
                 editor.draw_line()
-            except:
-                print('error')
+
+                tools.save_chat_json(json_path, messages)
+                tools.save_chat_md(md_path, messages)
+            except Exception as e:
+                del messages[-1]
+                editor.print_error(e)
+                editor.draw_line()
+
         except KeyboardInterrupt:
             break
 
         except EOFError:
             break
 
-        tools.save_chat_json(json_path, messages)
-        tools.save_chat_md(md_path, messages)

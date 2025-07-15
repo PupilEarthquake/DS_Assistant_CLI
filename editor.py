@@ -9,7 +9,8 @@ my_style = Style.from_dict(
     {
         'mg': '#00DB00',
         'mp': '#FF1493',
-        'mb': '#1E90FF'
+        'mb': '#1E90FF',
+        'mo': '#FF8C00',
     }
 )
 
@@ -33,6 +34,9 @@ def create_session(message, toolbar_content):
 
 def print_text(sender, text):
     print_formatted_text(HTML(f"<b><mp>{sender} > </mp></b>{text}"), style=my_style)
+
+def print_error(text):
+    print_formatted_text(HTML(f"<mo>{text}</mo>"), style=my_style)
 
 
 def draw_line():

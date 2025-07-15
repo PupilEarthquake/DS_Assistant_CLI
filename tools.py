@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import json
 from prompt_toolkit import print_formatted_text, HTML
+import numpy as np
 
 
 def get_date_now():
@@ -51,10 +52,28 @@ def list_chats():
     base_path = os.path.dirname(os.path.realpath(__file__))
     dir_path = f'{base_path}/messages'
     dates = os.listdir(dir_path)
+    dates_num = len(dates)
+    print_formatted_text(HTML(f"<b>{dir_path}</b>"))
     for n, date in enumerate(dates):
-        print_formatted_text(HTML(f"<b><style color='#00DB00'>{date}</style></b>"))
+
         files = os.listdir(f'{dir_path}/{date}')
-        for fname in files:
-            print(f'    -{fname}')
-        if n == 5:
-            break
+        files = [item.split('.')[0] for item in files]
+        files = np.unique(np.array(files))
+        files = [item.split('-')[1] for item in files]
+        num_files = len(files)
+
+        if n == dates_num - 1:
+            print_formatted_text(HTML(f" └─<b><style color='#00DB00'>{date}</style></b>"))
+            for k, fname in enumerate(files):
+                if k == num_files - 1:
+                    print(f'    └─{fname}')
+                else:
+                    print(f'    ├─{fname}')
+        else:
+            print_formatted_text(HTML(f" ├─<b><style color='#00DB00'>{date}</style></b>"))
+            for k, fname in enumerate(files):
+                if k == num_files - 1:
+                    print(f' │  └─{fname}')
+                else:
+                    print(f' │  ├─{fname}')
+

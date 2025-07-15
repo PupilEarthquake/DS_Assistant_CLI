@@ -1,11 +1,11 @@
-#!/path/to/your/python
+#!/home/xiao/anaconda3/envs/AI/bin/python
 
 import argparse
 from openai import AsyncOpenAI
 import httpx
 import tools
 import chat
-
+import json
 
 client = AsyncOpenAI(
     api_key="xxx", 
@@ -77,4 +77,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
