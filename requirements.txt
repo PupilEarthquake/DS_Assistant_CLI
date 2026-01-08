@@ -43,7 +43,7 @@ packaging=24.2=pypi_0
 pandas=2.2.3=pypi_0
 pillow=11.1.0=pypi_0
 pip=25.0=py312h06a4308_0
-prompt-toolkit=3.0.51=pypi_0
+prompt-toolkit=3.0.52=pypi_0
 protobuf=5.29.4=pypi_0
 pyarrow=19.0.1=pypi_0
 pydantic=2.10.6=pypi_0

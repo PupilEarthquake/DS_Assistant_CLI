@@ -4,6 +4,8 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit import print_formatted_text, HTML
 from prompt_toolkit.styles import Style
 import os
+from prompt_toolkit.shortcuts import choice
+import utils
 
 my_style = Style.from_dict(
     {
@@ -20,9 +22,9 @@ def _(event):
     event.current_buffer.validate_and_handle()
 
 
-def create_session(message, toolbar_content):
+def create_session(headtext, toolbar_content):
     session = PromptSession(
-        message=HTML(f"<b><style color='#00DB00'>{message}</style></b>"),
+        message=HTML(f"<b><style color='#00DB00'>{headtext}</style></b>"),
         multiline=True,
         key_bindings=kb,
         wrap_lines=True,
@@ -32,17 +34,30 @@ def create_session(message, toolbar_content):
     return session
 
 
-def print_text(sender, text):
-    print_formatted_text(HTML(f"<b><mp>{sender} > </mp></b>{text}"), style=my_style)
+def print_text(head, text, color='mp'):
+    print_formatted_text(HTML(f"<b><{color}>{head}</{color}></b>{text}"), style=my_style)
 
 def print_error(text):
     print_formatted_text(HTML(f"<mo>{text}</mo>"), style=my_style)
 
+def select_model(options):
+    print()
+    utils.draw_line(color='#00DB00')
+    res = choice(message=HTML("<b><style color='#00DB00'>Select a model</style></b>"), 
+                                options=options,
+                                default="salad")
+    utils.draw_line(color='#00DB00')
+    print()
+    return res
 
-def draw_line():
-    columns = os.get_terminal_size().columns
-    line = ''
-    while len(line) < columns:
-        line += '-'
-    print(line[:columns])
+def ask_delet():
+    print()
+    utils.draw_line(color='#F54927')
+    res = choice(message=HTML("<b><style color='#F54927'>Delet all histories?</style></b>"),
+                 options=[(True, 'Yes'), (False, 'No')], 
+                 default="salad")
+    utils.draw_line(color='#F54927')
+    print()
+    return res
+
 
