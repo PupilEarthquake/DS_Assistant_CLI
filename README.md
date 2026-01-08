@@ -75,12 +75,12 @@ Alternatively, you can install `requirements.txt`.
 ## Usage
 
 1. `ds -h` displays help;
-2. `ds ce` for Chinese-to-English translation. Use `ds ce -mt` to enable multi-translation, which provides multiple versions of a sentence. `ds ce -ab math` specifies a subject background, e.g., mathematics. `ds ce -t` enables reasoning mode to display the chain of thought. For other optional parameters, refer to `ds ce -h`;
-3. `ds ec` for English-to-Chinese translation;
+2. `ds ce` for CN-to-EN translation. Use `ds ce -mt` to enable multi-translation, which provides multiple versions of a sentence. `ds ce -ab math` specifies a subject background, e.g., mathematics. `ds ce -t` enables reasoning mode to display the chain of thought. For other optional parameters, refer to `ds ce -h`;
+3. `ds ec` for EN-to-CN translation;
 4. `ds syc` for English grammar checking;
 5. `ds dict` for dictionary functionality;
 6. `ds chat` for general chatting;
 7. `ds ls` to display chat history.
 
 Chat history is saved in the `chathist` folder located in the same directory as `ds.py`.
-------------------------------------------------------------------------------------------
+
