@@ -9,8 +9,8 @@ import chat
 
 
 
-parser = argparse.ArgumentParser(prog="DS Assistant Cli")
-parser.add_argument("--version", "-v", action="version", version="DS Assistant Cli 2.0")
+parser = argparse.ArgumentParser(prog="ds")
+parser.add_argument("--version", "-v", action="version", version="DS Assistant CLI 2.0")
 subparsers = parser.add_subparsers(dest="cmd")
 
 
@@ -38,7 +38,7 @@ parser_syc.add_argument("--think", "-t", help="show thinking chain (available in
 
 
 parser_dc = subparsers.add_parser("dict", help="an ai dictionary")
-parser_dc.add_argument("--detail", "-d", help="show details", action="store_true")
+# parser_dc.add_argument("--detail", "-d", help="show details", action="store_true")
 
 
 
@@ -50,12 +50,11 @@ model_options = [("deepseek-chat", "Fast model"), ("deepseek-reasoner", "Reasoni
 text_head_ls = {"ec": "你是一个翻译器, 将下面内容翻译成中文",
              "ce": "你是一个翻译器, 将下面内容翻译成英文",
              "syc": "检查该句子的语法和用词是否正确",
-             "dict": "翻译下方单词或短语"}
+             "dict": "翻译下方单词或短语, 给出英文单词的所有释义和词性"}
 text_head_options_ls = {"ec-ss": "要求给出句子的结构", 
                      "ec-ab": "要求在此学科的背景下进行翻译",
                      "ce-mt": "要求尽可能给出多种翻译",
-                     "ce-ab": "要求在此学科的背景下进行翻译",
-                     "dict-d": "并给出详细信息"}
+                     "ce-ab": "要求在此学科的背景下进行翻译",}
 toolbar_help = ["<b>[Ctrl]+[D]</b> Send", "<b>[Ctrl]+[C]</b> Exit"]
 
 
@@ -183,11 +182,11 @@ elif args.cmd == "dict":
     show_thinking_com = False
     toolbar_info = ["<b>Func</b> Dict(CN-EN)"]
     
-    if args.detail:
-        text_head = text_head + f", {text_head_options_ls["dict-d"]}"
-        toolbar_info.append("<b>Dtl</b> On")
-    else:
-        toolbar_info.append("<b>Dtl</b> Off")
+    # if args.detail:
+    #     text_head = text_head + f", {text_head_options_ls["dict-d"]}"
+    #     toolbar_info.append("<b>Dtl</b> On")
+    # else:
+    #     toolbar_info.append("<b>Dtl</b> Off")
 
     filename = f"{utils.time_now()}_{str.upper(args.cmd)}"
     toolbar_additional_content = utils.make_table([toolbar_info, toolbar_help])
